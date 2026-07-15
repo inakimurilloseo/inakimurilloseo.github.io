@@ -23,6 +23,8 @@
   header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
   .logo{font-weight:700;font-size:17px}
   .logo span{color:var(--acento)}
+  .volver{font-size:12px;font-weight:600;color:var(--sec);display:inline-block;margin-bottom:2px}
+  .volver:hover{color:var(--acento);text-decoration:none}
   .firma{font-size:15px;color:var(--sec)}
   .firma a{font-size:16px;font-weight:700}
 
@@ -113,7 +115,10 @@
 
 <header>
   <div class="wrap">
-    <div class="logo">Detector de <span>canibalizaciones</span> SEO</div>
+    <div>
+      <a class="volver" href="../">← Laboratorio SEO</a>
+      <div class="logo">Detector de <span>canibalizaciones</span> SEO</div>
+    </div>
     <div class="firma">Creado por <a href="https://linkedin.com/in/inaki40" target="_blank" rel="noopener"><b>Iñaki Murillo</b></a> · Head of SEO</div>
   </div>
 </header>
@@ -191,7 +196,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Detector de canibalizaciones SEO · gratis y sin registro</span>
+    <span>Detector de canibalizaciones SEO · <a href="../">ver todas las herramientas del laboratorio</a></span>
     <span>Creado por <a href="https://linkedin.com/in/inaki40" target="_blank" rel="noopener">Iñaki Murillo · Head of SEO</a></span>
   </div>
 </footer>
@@ -545,3 +550,4 @@ if(typeof module!=='undefined') module.exports={parseCSV:parseCSV,detectarColumn
 </script>
 </body>
 </html>
+
