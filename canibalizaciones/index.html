@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detector de canibalizaciones SEO · Iñaki Murillo</title>
+<meta name="description" content="Detecta en segundos qué URLs de tu web compiten por la misma keyword. Gratis, sin registro y 100% en tu navegador. Por Iñaki Murillo, Head of SEO.">
+<meta property="og:title" content="Detector de canibalizaciones SEO · Iñaki Murillo">
+<meta property="og:description" content="Arrastra tu CSV de Search Console y descubre qué keywords tienen varias URLs peleándose en Google. Gratis y 100% privado.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='16' r='6' fill='%23DC2626'/%3E%3Ccircle cx='22' cy='16' r='6' fill='%232563EB'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --texto:#1A1A1A; --acento:#2563EB; --sec:#6B7280; --borde:#E5E7EB; --fondo:#FAFAFA;
+    --rojo:#DC2626; --ambar:#F59E0B; --verde:#16A34A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--texto);line-height:1.5}
+  a{color:var(--acento);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+  header{background:#fff;border-bottom:1px solid var(--borde);padding:14px 0}
+  header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .logo{font-weight:700;font-size:17px}
+  .logo span{color:var(--acento)}
+  .firma{font-size:15px;color:var(--sec)}
+  .firma a{font-size:16px;font-weight:700}
+
+  .hero{padding:36px 0 8px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-0.02em}
+  .hero p{color:var(--sec);margin-top:6px;max-width:640px;font-size:15px}
+
+  .pasos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+  .paso{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:14px 16px;font-size:13.5px}
+  .paso b{display:block;color:var(--acento);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+  .paso small{color:var(--sec);display:block;margin-top:4px}
+
+  .drop{border:2px dashed var(--borde);border-radius:12px;background:#fff;padding:44px 20px;text-align:center;cursor:pointer;transition:border-color .15s, background .15s}
+  .drop.over{border-color:var(--acento);background:#EFF6FF}
+  .drop p{font-size:15px;font-weight:600}
+  .drop small{color:var(--sec);display:block;margin-top:6px;font-size:13px}
+  .privacidad{text-align:center;color:var(--sec);font-size:12.5px;margin:10px 0 14px}
+  .privacidad b{color:var(--verde);font-weight:600}
+
+  .opciones{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin:0 0 18px;background:#fff;border:1px solid var(--borde);border-radius:10px;padding:14px 16px}
+  .campo{display:flex;flex-direction:column;gap:4px}
+  .campo label{font-size:12px;color:var(--sec);font-weight:600}
+  .campo input{border:1px solid var(--borde);border-radius:8px;padding:8px 10px;font:inherit;font-size:13.5px;background:var(--fondo)}
+  .campo input:focus{outline:2px solid var(--acento);outline-offset:1px;border-color:var(--acento)}
+
+  .resumen{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .card{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:16px}
+  .card .num{font-size:26px;font-weight:700;letter-spacing:-0.02em}
+  .card .lbl{font-size:12.5px;color:var(--sec);margin-top:2px}
+  .card.rojo .num{color:var(--rojo)}
+  .card.ambar .num{color:var(--ambar)}
+  .card.verde .num{color:var(--verde)}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .chip{border:1px solid var(--borde);background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--texto)}
+  .chip.act{border-color:var(--acento);color:var(--acento);font-weight:600;background:#EFF6FF}
+  .toolbar input[type=search]{margin-left:auto;border:1px solid var(--borde);border-radius:8px;padding:7px 12px;font:inherit;font-size:13.5px;min-width:220px;background:#fff}
+  .btn{background:var(--acento);color:#fff;border:none;border-radius:8px;padding:8px 16px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+  .btn:hover{opacity:.9}
+  .btn-fantasma{background:#fff;color:var(--acento);border:1px solid var(--acento)}
+  .ayuda{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin:0 0 30px;justify-content:center}
+  .ayuda details{flex:1;min-width:280px;max-width:640px}
+  .ayuda summary{cursor:pointer;font-size:13.5px;color:var(--acento);font-weight:600;padding:9px 0}
+  .ayuda-body{background:#fff;border:1px solid var(--borde);border-radius:10px;padding:14px 16px;font-size:13.5px;margin-top:6px}
+  .ayuda-body p{margin-bottom:10px}
+  .ayuda-body p:last-child{margin-bottom:0}
+
+  .kw{background:#fff;border:1px solid var(--borde);border-radius:10px;margin-bottom:10px;overflow:hidden}
+  .kw-head{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;user-select:none}
+  .kw-head:hover{background:var(--fondo)}
+  .sev{width:10px;height:10px;border-radius:50%;flex:none}
+  .sev.rojo{background:var(--rojo)} .sev.ambar{background:var(--ambar)} .sev.verde{background:var(--verde)}
+  .kw-nombre{font-weight:600;font-size:14.5px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kw-meta{font-size:12.5px;color:var(--sec);flex:none;white-space:nowrap}
+  .flecha{color:var(--sec);flex:none;transition:transform .15s;font-size:11px}
+  .kw.abierta .flecha{transform:rotate(90deg)}
+  .kw-body{display:none;border-top:1px solid var(--borde);padding:6px 16px 14px}
+  .kw.abierta .kw-body{display:block}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  th{text-align:left;color:var(--sec);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding:6px 8px;border-bottom:1px solid var(--borde)}
+  td{padding:8px;border-bottom:1px solid var(--borde);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.url{max-width:420px;word-break:break-all}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  th.n{text-align:right}
+  .barra{height:5px;background:var(--borde);border-radius:3px;margin-top:5px;overflow:hidden}
+  .barra i{display:block;height:100%;background:var(--acento);border-radius:3px}
+  .ganadora{font-size:11px;color:var(--verde);font-weight:600;margin-left:6px}
+
+  .aviso{background:#fff;border:1px solid var(--borde);border-left:3px solid var(--ambar);border-radius:8px;padding:12px 16px;font-size:13.5px;margin-bottom:18px;display:none}
+  .nota{background:#fff;border:1px solid var(--borde);border-left:3px solid var(--acento);border-radius:8px;padding:12px 16px;font-size:13.5px;color:var(--sec);margin-bottom:18px}
+  .nota b{color:var(--texto)}
+  .vacio{text-align:center;color:var(--sec);padding:40px 0;font-size:14.5px}
+  #zonaResultados{display:none}
+
+  footer{border-top:1px solid var(--borde);margin-top:50px;padding:20px 0 30px;background:#fff}
+  footer .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sec)}
+
+  @media(max-width:760px){
+    .pasos,.resumen{grid-template-columns:1fr 1fr}
+    .toolbar input[type=search]{margin-left:0;flex:1}
+  }
+  @media(max-width:480px){.pasos,.resumen{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">Detector de <span>canibalizaciones</span> SEO</div>
+    <div class="firma">Creado por <a href="https://linkedin.com/in/inaki40" target="_blank" rel="noopener"><b>Iñaki Murillo</b></a> · Head of SEO</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>Descubre qué URLs de tu web compiten por la misma keyword</h1>
+    <p>Arrastra un CSV con pares consulta + página y verás en segundos qué keywords tienen varias URLs peleándose en Google, ordenadas por gravedad.</p>
+  </section>
+
+  <section class="pasos">
+    <div class="paso"><b>Paso 1 · Consigue el CSV (2 min)</b>Instala <a href="https://searchanalyticsforsheets.com" target="_blank" rel="noopener">Search Analytics for Sheets</a> (gratis) en Google Sheets, elige tu propiedad, en <b>Group By</b> marca <b>Query</b> y <b>Page</b>, pulsa <b>Request Data</b> y descarga como CSV.<small>¿Sin ganas de exports ahora? Prueba abajo con datos de ejemplo.</small></div>
+    <div class="paso"><b>Paso 2 · Arrastra</b>Suelta el CSV aquí abajo. La herramienta detecta sola las columnas, en español o inglés, con coma o punto y coma.</div>
+    <div class="paso"><b>Paso 3 · Actúa</b>Revisa primero las rojas: son las que reparten clics entre varias URLs. Exporta el resultado y decide qué URL debe mandar.<small>Ojo a la intención: categoría y post pueden convivir; blog contra blog casi idéntico, o dos transaccionales pisándose, casi siempre es guerra real.</small></div>
+  </section>
+
+  <div class="drop" id="drop" tabindex="0" role="button" aria-label="Subir CSV">
+    <p>Arrastra tu CSV aquí o haz clic para elegirlo</p>
+    <small>Acepta .csv · columnas mínimas: keyword y URL · clics, impresiones y posición mejoran el diagnóstico</small>
+    <input type="file" id="fichero" accept=".csv,text/csv" hidden>
+  </div>
+  <p class="privacidad"><b>100% privado:</b> el archivo se procesa en tu navegador. Ningún dato sale de tu ordenador.</p>
+
+  <div class="ayuda">
+    <button class="btn btn-fantasma" id="btnDemo">▶ Probar con datos de ejemplo</button>
+    <details>
+      <summary>¿De dónde saco el CSV? Guía de 2 minutos</summary>
+      <div class="ayuda-body">
+        <p><b>Importante:</b> el export normal de Search Console <b>no vale</b> — te da consultas y páginas por separado, sin cruzar. Necesitas una fila por cada par keyword + URL. Tres formas gratis:</p>
+        <p><b>1 · Search Analytics for Sheets</b> (recomendada, 2 min): instala el <a href="https://searchanalyticsforsheets.com" target="_blank" rel="noopener">complemento gratuito</a> en Google Sheets → Extensiones → Search Analytics for Sheets → Open Sidebar → elige tu propiedad → en <b>Group By</b> selecciona <b>Query</b> y <b>Page</b> → <b>Request Data</b> → Archivo → Descargar → CSV.</p>
+        <p><b>2 · Looker Studio</b> (5 min): informe nuevo → fuente Search Console → tabla <b>"Impresión de URL"</b> (la única que cruza consulta con página) → tabla con dimensiones Consulta + Landing Page y métricas Clics, Impresiones y Posición → tres puntos → Exportar CSV.</p>
+        <p><b>3 · Semrush / Ahrefs</b>: export de posiciones orgánicas con URLs. Funciona, pero con datos estimados; Search Console es la verdad.</p>
+      </div>
+    </details>
+  </div>
+
+  <div id="zonaResultados">
+    <div class="aviso" id="aviso"></div>
+
+    <div class="opciones">
+      <div class="campo">
+        <label for="minImpr">Impresiones mínimas por keyword</label>
+        <input type="number" id="minImpr" value="10" min="0" style="width:120px">
+      </div>
+      <div class="campo" style="flex:1;min-width:220px">
+        <label for="marca">Excluir términos de marca (separados por comas)</label>
+        <input type="text" id="marca" placeholder="ej.: benco, mimarca">
+      </div>
+      <button class="btn" id="btnCsv">Exportar resultado CSV</button>
+    </div>
+
+    <div class="resumen">
+      <div class="card"><div class="num" id="nKw">0</div><div class="lbl">Keywords analizadas</div></div>
+      <div class="card rojo"><div class="num" id="nRojo">0</div><div class="lbl">Canibalización grave</div></div>
+      <div class="card ambar"><div class="num" id="nAmbar">0</div><div class="lbl">A vigilar</div></div>
+      <div class="card verde"><div class="num" id="nVerde">0</div><div class="lbl">Leve (una URL domina)</div></div>
+    </div>
+
+    <div class="nota">
+      <b>La herramienta te da el vistazo; la decisión es tuya.</b> Cada proyecto es un mundo: que una keyword tenga varias URLs puede ser canibalización real o convivencia buscada (categoría + guía, términos de marca, SERPs con intención mixta…). Antes de fusionar, redirigir o desindexar nada, revisa la intención de búsqueda, la SERP real, la estacionalidad y el papel de cada URL en el negocio. Esto te señala dónde mirar; interpretarlo y decidir es el trabajo del SEO.
+    </div>
+
+    <div class="toolbar">
+      <button class="chip act" data-f="todas">Todas</button>
+      <button class="chip" data-f="rojo">Graves</button>
+      <button class="chip" data-f="ambar">A vigilar</button>
+      <button class="chip" data-f="verde">Leves</button>
+      <input type="search" id="buscar" placeholder="Buscar keyword o URL…">
+    </div>
+
+    <div id="lista"></div>
+    <div class="vacio" id="vacio" style="display:none">Sin canibalizaciones con los filtros actuales. Buena señal.</div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Detector de canibalizaciones SEO · gratis y sin registro</span>
+    <span>Creado por <a href="https://linkedin.com/in/inaki40" target="_blank" rel="noopener">Iñaki Murillo · Head of SEO</a></span>
+  </div>
+</footer>
+
+<script>
+/* ================= LÓGICA PURA ================= */
+
+function detectarDelimitador(linea){
+  var c={',':0,';':0,'\t':0}, dentro=false;
+  for(var i=0;i<linea.length;i++){
+    var ch=linea[i];
+    if(ch==='"') dentro=!dentro;
+    else if(!dentro && c.hasOwnProperty(ch)) c[ch]++;
+  }
+  return c[';']>=c[','] ? (c['\t']>c[';']?'\t':';') : (c['\t']>c[',']?'\t':',');
+}
+
+function parseCSV(texto){
+  texto=texto.replace(/^\uFEFF/,'');
+  var primeraLinea=texto.split(/\r?\n/,1)[0]||'';
+  var d=detectarDelimitador(primeraLinea);
+  var filas=[], fila=[], campo='', dentro=false;
+  for(var i=0;i<texto.length;i++){
+    var ch=texto[i];
+    if(dentro){
+      if(ch==='"'){ if(texto[i+1]==='"'){campo+='"';i++;} else dentro=false; }
+      else campo+=ch;
+    }else{
+      if(ch==='"') dentro=true;
+      else if(ch===d){ fila.push(campo); campo=''; }
+      else if(ch==='\n'||ch==='\r'){
+        if(ch==='\r'&&texto[i+1]==='\n') i++;
+        fila.push(campo); campo='';
+        if(fila.length>1||fila[0]!=='') filas.push(fila);
+        fila=[];
+      }
+      else campo+=ch;
+    }
+  }
+  if(campo!==''||fila.length){ fila.push(campo); if(fila.length>1||fila[0]!=='') filas.push(fila); }
+  return filas;
+}
+
+function norm(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+
+var ALIAS={
+  kw:['consulta','consultas','query','queries','keyword','palabra clave','palabras clave','termino de busqueda','top queries','search query'],
+  url:['pagina','paginas','page','pages','url','landing page','pagina de destino','paginas principales','direccion url','top pages','url actual','current url'],
+  clics:['clics','clicks','clics de url','url clicks','traffic','trafico'],
+  impr:['impresiones','impressions'],
+  pos:['posicion','posicion media','position','average position','avg. position','avg position','pos','posicion promedio']
+};
+
+function detectarColumnas(cabecera){
+  var h=cabecera.map(norm), out={kw:-1,url:-1,clics:-1,impr:-1,pos:-1};
+  Object.keys(ALIAS).forEach(function(campo){
+    for(var i=0;i<h.length;i++){
+      if(out[campo]!==-1) break;
+      for(var j=0;j<ALIAS[campo].length;j++){
+        if(h[i]===ALIAS[campo][j]){ out[campo]=i; break; }
+      }
+    }
+    // segunda pasada: coincidencia parcial si no hubo exacta
+    if(out[campo]===-1){
+      for(var i2=0;i2<h.length;i2++){
+        var usado = out.kw===i2||out.url===i2||out.clics===i2||out.impr===i2||out.pos===i2;
+        if(usado) continue;
+        for(var j2=0;j2<ALIAS[campo].length;j2++){
+          if(h[i2].indexOf(ALIAS[campo][j2])!==-1){ out[campo]=i2; break; }
+        }
+        if(out[campo]!==-1) break;
+      }
+    }
+  });
+  return out;
+}
+
+function numero(v){
+  if(v==null) return 0;
+  v=String(v).trim().replace(/%/g,'').replace(/\s/g,'');
+  if(v==='') return 0;
+  // formato español 1.234,56 vs inglés 1,234.56
+  if(v.indexOf(',')!==-1 && v.indexOf('.')!==-1){
+    if(v.lastIndexOf(',')>v.lastIndexOf('.')) v=v.replace(/\./g,'').replace(',','.');
+    else v=v.replace(/,/g,'');
+  } else if(v.indexOf(',')!==-1){
+    var partes=v.split(',');
+    v = (partes[1]&&partes[1].length===3&&partes.length===2&&partes[0].length<=3) ? v.replace(',','') : v.replace(',','.');
+  }
+  var n=parseFloat(v);
+  return isNaN(n)?0:n;
+}
+
+function limpiarURL(u){
+  u=String(u||'').trim();
+  var i=u.indexOf('#');
+  if(i!==-1) u=u.slice(0,i);
+  return u;
+}
+
+function analizar(filas, cols, minImpr, terminosMarca){
+  var mapa={};
+  for(var i=1;i<filas.length;i++){
+    var f=filas[i];
+    var kw=norm(f[cols.kw]);
+    var url=limpiarURL(f[cols.url]);
+    if(!kw||!url) continue;
+    if(!mapa[kw]) mapa[kw]={kw:kw,urls:{}};
+    var u=mapa[kw].urls[url];
+    if(!u) u=mapa[kw].urls[url]={url:url,clics:0,impr:0,posSum:0,posPeso:0};
+    var c = cols.clics!==-1 ? numero(f[cols.clics]) : 0;
+    var im = cols.impr!==-1 ? numero(f[cols.impr]) : 0;
+    var p = cols.pos!==-1 ? numero(f[cols.pos]) : 0;
+    u.clics+=c; u.impr+=im;
+    if(p>0){ var peso=im>0?im:1; u.posSum+=p*peso; u.posPeso+=peso; }
+  }
+
+  var hayClics=cols.clics!==-1, hayImpr=cols.impr!==-1;
+  var res=[], totalKw=0;
+
+  Object.keys(mapa).forEach(function(kw){
+    var esMarca = terminosMarca.some(function(t){ return t && kw.indexOf(t)!==-1; });
+    var urls=Object.keys(mapa[kw].urls).map(function(k){
+      var u=mapa[kw].urls[k];
+      u.pos = u.posPeso>0 ? u.posSum/u.posPeso : null;
+      return u;
+    });
+    var imprTotal=urls.reduce(function(a,u){return a+u.impr;},0);
+    if(hayImpr && imprTotal<minImpr) return;
+    if(esMarca) return;
+    totalKw++;
+    if(urls.length<2) return;
+
+    var clicsTotal=urls.reduce(function(a,u){return a+u.clics;},0);
+    urls.sort(function(a,b){ return (b.clics-a.clics) || (b.impr-a.impr) || ((a.pos||99)-(b.pos||99)); });
+
+    var sev, cuota=null;
+    if(hayClics && clicsTotal>0){
+      cuota=urls[0].clics/clicsTotal;
+      var urlsConClics=urls.filter(function(u){return u.clics>0;}).length;
+      if(cuota<0.7 && urlsConClics>=2) sev='rojo';
+      else if(cuota<0.9 && urlsConClics>=2) sev='ambar';
+      else sev='verde';
+    } else if(hayImpr && imprTotal>0){
+      cuota=urls[0].impr/imprTotal;
+      sev = cuota<0.7 ? 'rojo' : (cuota<0.9 ? 'ambar' : 'verde');
+    } else {
+      sev='ambar';
+    }
+
+    res.push({kw:kw,urls:urls,sev:sev,cuota:cuota,clics:clicsTotal,impr:imprTotal,nUrls:urls.length});
+  });
+
+  var orden={rojo:0,ambar:1,verde:2};
+  res.sort(function(a,b){ return orden[a.sev]-orden[b.sev] || b.clics-a.clics || b.impr-a.impr; });
+  return {items:res,totalKw:totalKw,hayClics:hayClics,hayImpr:hayImpr};
+}
+
+/* ================= INTERFAZ ================= */
+if(typeof document!=='undefined'){(function(){
+  var filasCrudas=null, cols=null, resultado=null, filtro='todas', busqueda='';
+  var $=function(id){return document.getElementById(id);};
+  var drop=$('drop'), inp=$('fichero');
+
+  drop.addEventListener('click',function(){inp.click();});
+  drop.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click();}});
+  // toda la página acepta el arrastre: evita que el navegador abra el CSV si cae fuera del recuadro
+  ['dragover','dragenter'].forEach(function(ev){
+    document.addEventListener(ev,function(e){e.preventDefault();drop.classList.add('over');});
+  });
+  document.addEventListener('dragleave',function(e){ if(!e.relatedTarget) drop.classList.remove('over'); });
+  document.addEventListener('drop',function(e){
+    e.preventDefault(); drop.classList.remove('over');
+    if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
+      leer(e.dataTransfer.files[0]);
+    } else {
+      alerta('No he recibido ningún archivo. Arrastra el CSV directamente desde una carpeta de tu ordenador (no desde otra pestaña del navegador), o haz clic en el recuadro para elegirlo.');
+    }
+  });
+  inp.addEventListener('change',function(){ if(inp.files.length) leer(inp.files[0]); });
+
+  function leer(fich){
+    var r=new FileReader();
+    r.onload=function(){
+      var texto=r.result;
+      // CSV guardado desde Excel en ANSI: los acentos llegan corruptos en UTF-8 → reintento en windows-1252
+      if(texto.indexOf('\uFFFD')!==-1){
+        var r2=new FileReader();
+        r2.onload=function(){ procesar(r2.result); };
+        r2.readAsText(fich,'windows-1252');
+        return;
+      }
+      procesar(texto);
+    };
+    r.readAsText(fich);
+  }
+
+  function procesar(texto){
+    filasCrudas=parseCSV(texto);
+    if(!filasCrudas.length){ alerta('El archivo está vacío o no se ha podido leer.'); return; }
+    cols=detectarColumnas(filasCrudas[0]);
+    if(cols.kw===-1||cols.url===-1){
+      alerta('No encuentro las columnas de keyword y URL. Cabecera detectada: <b>'+filasCrudas[0].join(' · ')+'</b>. Necesitas un CSV con una fila por par consulta + página: abre la guía de 2 minutos que hay junto al botón de ejemplo.');
+      $('zonaResultados').style.display='block';
+      $('lista').innerHTML=''; $('vacio').style.display='none';
+      return;
+    }
+    recalcular();
+  }
+
+  var DEMO='Consulta;Página;Clics;Impresiones;Posición media\n'
+    // transaccional vs transaccional: dos categorías duplicadas peleándose
+    +'comprar zapatillas trail;https://tienda-ejemplo.es/zapatillas-trail/;210;3800;5,1\n'
+    +'comprar zapatillas trail;https://tienda-ejemplo.es/calzado/trail-running/;190;3500;5,6\n'
+    // blog vs blog: tres listados casi idénticos de distintos años
+    +'mejores zapatillas trail;https://tienda-ejemplo.es/blog/mejores-zapatillas-trail-2025/;240;4900;4,2\n'
+    +'mejores zapatillas trail;https://tienda-ejemplo.es/blog/mejores-zapatillas-trail-2024/;150;3800;6,0\n'
+    +'mejores zapatillas trail;https://tienda-ejemplo.es/blog/top-10-zapatillas-trail/;110;2900;7,3\n'
+    // blog vs blog: dos posts que cuentan lo mismo
+    +'como limpiar zapatillas trail;https://tienda-ejemplo.es/blog/como-limpiar-zapatillas-trail/;160;2400;4,8\n'
+    +'como limpiar zapatillas trail;https://tienda-ejemplo.es/blog/limpiar-zapatillas-barro/;45;1600;7,9\n'
+    // categoría vs ficha de producto
+    +'mochila trekking 40l;https://tienda-ejemplo.es/mochilas-trekking/;310;4100;2,8\n'
+    +'mochila trekking 40l;https://tienda-ejemplo.es/mochila-alpine-40l/;85;2300;6,9\n'
+    // convivencia legítima: la categoría domina, el post apenas roza
+    +'chaqueta impermeable montaña;https://tienda-ejemplo.es/chaquetas-impermeables/;520;7400;2,1\n'
+    +'chaqueta impermeable montaña;https://tienda-ejemplo.es/blog/mejores-chaquetas-impermeables/;40;1900;9,8\n'
+    // keywords sanas con una sola URL
+    +'bastones senderismo;https://tienda-ejemplo.es/bastones/;260;3500;3,0\n'
+    +'crema solar montaña;https://tienda-ejemplo.es/blog/proteccion-solar-montana/;90;1800;4,4\n';
+  $('btnDemo').addEventListener('click',function(){
+    procesar(DEMO);
+    $('zonaResultados').scrollIntoView({behavior:'smooth'});
+  });
+
+  function alerta(html){
+    var a=$('aviso'); a.innerHTML=html; a.style.display='block';
+    $('zonaResultados').style.display='block';
+  }
+
+  function recalcular(){
+    var minImpr=parseInt($('minImpr').value,10)||0;
+    var marca=$('marca').value.split(',').map(norm).filter(Boolean);
+    resultado=analizar(filasCrudas,cols,minImpr,marca);
+    $('zonaResultados').style.display='block';
+    var a=$('aviso');
+    if(!resultado.hayClics&&!resultado.hayImpr){
+      a.innerHTML='Tu CSV no trae clics ni impresiones: detecto las keywords con varias URLs, pero sin métricas no puedo graduar la gravedad. Todas se marcan en ámbar.';
+      a.style.display='block';
+    } else a.style.display='none';
+    pintar();
+  }
+
+  $('minImpr').addEventListener('input',function(){ if(filasCrudas) recalcular(); });
+  $('marca').addEventListener('input',function(){ if(filasCrudas) recalcular(); });
+  $('buscar').addEventListener('input',function(e){ busqueda=norm(e.target.value); pintar(); });
+  document.querySelectorAll('.chip').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('act');});
+      ch.classList.add('act'); filtro=ch.dataset.f; pintar();
+    });
+  });
+
+  function fmt(n){ return n==null?'—':Math.round(n).toLocaleString('es-ES'); }
+  function fmtPos(p){ return p==null?'—':p.toFixed(1).replace('.',','); }
+  function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+  function visibles(){
+    return resultado.items.filter(function(it){
+      if(filtro!=='todas'&&it.sev!==filtro) return false;
+      if(busqueda){
+        var hit = it.kw.indexOf(busqueda)!==-1 || it.urls.some(function(u){return norm(u.url).indexOf(busqueda)!==-1;});
+        if(!hit) return false;
+      }
+      return true;
+    });
+  }
+
+  function pintar(){
+    var items=resultado.items;
+    $('nKw').textContent=fmt(resultado.totalKw);
+    $('nRojo').textContent=fmt(items.filter(function(i){return i.sev==='rojo';}).length);
+    $('nAmbar').textContent=fmt(items.filter(function(i){return i.sev==='ambar';}).length);
+    $('nVerde').textContent=fmt(items.filter(function(i){return i.sev==='verde';}).length);
+
+    var vs=visibles(), lista=$('lista'), html='';
+    vs.slice(0,500).forEach(function(it,ix){
+      var meta=[];
+      meta.push(it.nUrls+' URLs');
+      if(resultado.hayClics) meta.push(fmt(it.clics)+' clics');
+      if(resultado.hayImpr) meta.push(fmt(it.impr)+' impr.');
+      if(it.cuota!=null) meta.push('la mejor se lleva el '+Math.round(it.cuota*100)+'%');
+      html+='<div class="kw" data-ix="'+ix+'">'
+        +'<div class="kw-head"><span class="sev '+it.sev+'"></span>'
+        +'<span class="kw-nombre">'+esc(it.kw)+'</span>'
+        +'<span class="kw-meta">'+meta.join(' · ')+'</span>'
+        +'<span class="flecha">▶</span></div>'
+        +'<div class="kw-body">'+tabla(it)+'</div></div>';
+    });
+    lista.innerHTML=html;
+    $('vacio').style.display = vs.length? 'none':'block';
+    if(vs.length>500){
+      lista.insertAdjacentHTML('beforeend','<p class="vacio">Mostrando las 500 más graves de '+fmt(vs.length)+'. Usa el buscador o exporta el CSV completo.</p>');
+    }
+    lista.querySelectorAll('.kw-head').forEach(function(h){
+      h.addEventListener('click',function(){ h.parentElement.classList.toggle('abierta'); });
+    });
+  }
+
+  function tabla(it){
+    var max = resultado.hayClics ? Math.max.apply(null,it.urls.map(function(u){return u.clics;})) : Math.max.apply(null,it.urls.map(function(u){return u.impr;}));
+    var h='<table><thead><tr><th>URL</th>'+(resultado.hayClics?'<th class="n">Clics</th>':'')+(resultado.hayImpr?'<th class="n">Impresiones</th>':'')+'<th class="n">Posición</th></tr></thead><tbody>';
+    it.urls.forEach(function(u,i){
+      var val=resultado.hayClics?u.clics:u.impr;
+      var pct=max>0?Math.max(2,Math.round(val/max*100)):0;
+      h+='<tr><td class="url">'+esc(u.url)+(i===0?'<span class="ganadora">← candidata a quedarse</span>':'')
+        +'<div class="barra"><i style="width:'+pct+'%"></i></div></td>'
+        +(resultado.hayClics?'<td class="n">'+fmt(u.clics)+'</td>':'')
+        +(resultado.hayImpr?'<td class="n">'+fmt(u.impr)+'</td>':'')
+        +'<td class="n">'+fmtPos(u.pos)+'</td></tr>';
+    });
+    return h+'</tbody></table>';
+  }
+
+  $('btnCsv').addEventListener('click',function(){
+    if(!resultado) return;
+    var sevTxt={rojo:'Grave',ambar:'A vigilar',verde:'Leve'};
+    var filas=[['Keyword','Gravedad','Nº URLs','URL','Clics','Impresiones','Posición media','% clics de la keyword']];
+    resultado.items.forEach(function(it){
+      it.urls.forEach(function(u){
+        var pct = it.clics>0 ? Math.round(u.clics/it.clics*100)+'%' : '';
+        filas.push([it.kw,sevTxt[it.sev],it.nUrls,u.url,u.clics,u.impr,u.pos!=null?u.pos.toFixed(1):'',pct]);
+      });
+    });
+    var csv=filas.map(function(f){
+      return f.map(function(c){ c=String(c); return /[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(';');
+    }).join('\n');
+    var blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='canibalizaciones-seo.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+})();}
+
+/* export para tests en node */
+if(typeof module!=='undefined') module.exports={parseCSV:parseCSV,detectarColumnas:detectarColumnas,analizar:analizar,numero:numero,norm:norm};
+</script>
+</body>
+</html>
